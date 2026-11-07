@@ -49,12 +49,13 @@ border-radius:14px;padding:14px 16px}
 button.primary{flex:1;padding:15px;border:0;border-radius:14px;background:var(--accent);color:#fff;font-size:17px;font-weight:600}
 button.ghost{flex:none;padding:15px 18px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);font-size:16px}
 button:disabled{opacity:.4}
-.opts{display:flex;flex-direction:column;gap:10px;padding:4px 0 0}
-.opt{padding:14px 16px;border:1px solid #e3d5d5;border-radius:14px;font-size:19px;text-align:center;background:#fff}
+.opts{display:flex;flex-direction:column;padding:4px 0 0}
+.opt{padding:14px 16px;border:1px solid #e3d5d5;border-radius:14px;font-size:19px;text-align:center;background:#fff;margin-bottom:12px}
+.opt:last-child{margin-bottom:0}
 .opt.right{border-color:#2e7d32;background:#e8f5e9;color:#2e7d32}
 .opt.wrong{border-color:#c62828;background:#fdecea;color:#c62828}
 .opt.dim{opacity:.45}
-.cmp{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+.cmp{margin-top:20px;border-top:1px solid var(--line);padding-top:14px}
 .cmpRow{padding:10px 12px;border-radius:12px;margin-bottom:8px;font-size:14px;line-height:1.5}
 .cmpRow.bad{background:#fdecea;color:#8a2b23}
 .cmpRow.good{background:#e8f5e9;color:#245c2a}
