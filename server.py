@@ -350,7 +350,15 @@ class Handler(SimpleHTTPRequestHandler):
         if not sess:
             return self.redirect("/notice")
         if u.path == "/":
-            self.path = "/index.html"
+            self.path = "/dist/index.html"
+        elif u.path.startswith("/assets/"):
+            self.path = "/dist" + u.path
+        elif u.path.endswith(".html"):
+            pass
+        else:
+            rel = u.path.lstrip("/")
+            if not os.path.exists(os.path.join(BASE, rel)):
+                self.path = "/dist/index.html"
         super().do_GET()
 
     def end_headers(self):

@@ -1,2 +1,4 @@
 state.db
 state.db*\n*.bak*\noidc.json\n__pycache__/\n*.pyc
+dist/
+web/node_modules/
