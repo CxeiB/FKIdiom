@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover,interactive-widget=resizes-content">
 <meta name="theme-color" content="#faf8f4">
-<title>习语</title>
+<title>成语学习</title>
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -241,7 +241,8 @@ function cmpHtml(it) {
       (w.gloss ? '<div class="cmpGloss">' + esc(w.gloss) + '</div>' : '') +
       '<div class="cmpDef">' + esc(w.def || '') + '</div></div>';
   };
-  return '<div class="cmp">' + row('bad', '你选的', picked) + row('good', '正确答案', it) + '</div>';
+  return '<div class="cmp">' + row('bad', '你选的', picked) + row('good', '正确答案', it) +
+    '<button class="primary" style="margin-top:6px" onclick="nextQuiz()">下一个</button></div>';
 }
 async function answerChoice(w) {
   if (S.answered) return;
@@ -256,7 +257,7 @@ async function answerChoice(w) {
     const r = await api('/api/review', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ word: it.word, ok: S.ok, ms: Date.now() - (S.t0 || Date.now()) }) });
     if (r && r.item) { STATE[it.word] = r.item; if (r.summary) SM = r.summary; }
   } catch (e) {}
-  setTimeout(nextQuiz, S.ok ? 800 : 3600);
+  if (S.ok) setTimeout(nextQuiz, 500);
 }
 function retryWrong() {
   if (!S.wrong.length) return;
@@ -313,7 +314,7 @@ function home() {
   const nw = SM ? (SM.todayNew || 0) : 0;
   const rv = SM ? (SM.todayReview || 0) : 0;
   app.innerHTML =
-    '<header><div class="brand">习语</div><div class="sub">' + (SM ? SM.seen + '/' + SM.total + ' 已学' : '') + ' · <span onclick="openSettings()" style="text-decoration:underline">设置</span></div></header>' +
+    '<header><div class="brand">成语学习</div><div class="sub">' + (SM ? SM.seen + '/' + SM.total + ' 已学' : '') + ' · <span onclick="openSettings()" style="text-decoration:underline">设置</span></div></header>' +
     '<div class="scroll">' +
       '<div class="cta" onclick="todayReview(this)"><div><div class="ctaTitle">今日复习</div><div class="ctaSub">' + (due ? due + ' 个待复习' : '暂无待复习') + '</div></div><div class="ctaArrow">›</div></div>' +
       '<div class="todayRow"><span>今日新学 <b>' + nw + '</b></span><span>今日复习 <b>' + rv + '</b></span></div>' +
