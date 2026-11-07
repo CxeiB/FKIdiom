@@ -36,14 +36,19 @@ function esc(s) { return String(s == null ? '' : s) }
 
 function toast(t) { toastMsg.value = t; clearTimeout(toastTimer); toastTimer = setTimeout(() => { toastMsg.value = '' }, 1400) }
 
+const WORDS_VER = '2026-11-07d'
 async function getWords() {
   try {
+    if (localStorage.getItem('fk_words_ver') !== WORDS_VER) {
+      localStorage.removeItem('fk_words_cache')
+      localStorage.removeItem('fk_words_at')
+    }
     const raw = localStorage.getItem('fk_words_cache')
     const at = Number(localStorage.getItem('fk_words_at') || 0)
     if (raw && Date.now() - at < 7 * 864e5) return JSON.parse(raw)
   } catch (e) {}
   const w = await api('/api/words')
-  try { localStorage.setItem('fk_words_cache', JSON.stringify(w)); localStorage.setItem('fk_words_at', String(Date.now())) } catch (e) {}
+  try { localStorage.setItem('fk_words_cache', JSON.stringify(w)); localStorage.setItem('fk_words_at', String(Date.now())); localStorage.setItem('fk_words_ver', WORDS_VER) } catch (e) {}
   return w
 }
 async function load() {
