@@ -113,8 +113,8 @@ async function answerChoice(w) {
   answered.value = true
   results.value.push(okFlag.value)
   if (!okFlag.value) wrong.value.push({ word: it.word, def: it.def, pinyin: it.pinyin })
-  await record(it.word, okFlag.value, Date.now() - (t0.value || Date.now()))
-  if (okFlag.value) setTimeout(nextQuestion, 500)
+  record(it.word, okFlag.value, Date.now() - (t0.value || Date.now())).catch(() => {})
+  if (okFlag.value) setTimeout(nextQuestion, 300)
 }
 function pickedInfo() { return WORDS.value.find(w => w.word === picked.value) || { word: picked.value, gloss: '', def: '' } }
 
@@ -127,7 +127,7 @@ async function submitWrite() {
   results.value.push(okFlag.value)
   if (!okFlag.value) wrong.value.push({ word: it.word, def: it.def, pinyin: it.pinyin })
   feedback.value = okFlag.value ? '答对了' : '正确答案：' + it.word
-  await record(it.word, okFlag.value, Date.now() - (t0.value || Date.now()))
+  record(it.word, okFlag.value, Date.now() - (t0.value || Date.now())).catch(() => {})
 }
 function nextQuestion() {
   if (qi.value < queue.value.length - 1) {
