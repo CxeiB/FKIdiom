@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover,interactive-widget=resizes-content">
+<meta name="theme-color" content="#faf8f4">
+<title>习语</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="成语">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png">
+<link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/splash/splash-1170x2532.png">
+<link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/splash/splash-1179x2556.png">
+<link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/splash/splash-1284x2778.png">
+<link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/splash/splash-1290x2796.png">
+<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/splash/splash-1125x2436.png">
+<link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/splash/splash-1242x2688.png">
+<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/splash/splash-750x1334.png">
+<link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/splash/splash-828x1792.png">
+<link rel="apple-touch-startup-image" media="(device-width: 360px) and (device-height: 640px) and (-webkit-device-pixel-ratio: 3)" href="/splash/splash-1080x1920.png">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;position:fixed;inset:0;width:100%;touch-action:manipulation;-webkit-text-size-adjust:100%;overscroll-behavior:none;}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:#faf8f4;color:#25211c}
+#app{position:fixed;left:0;right:0;top:var(--vtop,0px);height:var(--vh,100%);display:flex;flex-direction:column;max-width:520px;margin:0 auto;width:100%;padding:16px 16px calc(12px + env(safe-area-inset-bottom))}
+.noscroll{overflow:hidden}
+.scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:12px;padding-bottom:4px}
+header{display:flex;align-items:center;justify-content:space-between;padding:0 2px 10px;flex:none}
+.brand{font-size:15px;font-weight:600;letter-spacing:1px;color:#8a7d6b}
+.sub{font-size:13px;color:#a99c88}
+.card{background:#fff;border-radius:22px;padding:26px 22px;box-shadow:0 2px 10px rgba(80,60,30,.06),0 12px 28px rgba(80,60,30,.05);transition:background .25s}
+.card.center{display:flex;flex-direction:column;justify-content:center;min-height:230px}
+.card.ok{background:#eef7f0}
+.card.bad{background:#fdeeee}
+.word{font-size:clamp(30px,9vw,42px);font-weight:600;letter-spacing:4px;line-height:1.35;text-align:center}
+.pinyin{text-align:center;font-size:14px;letter-spacing:1px;color:#a99c88;margin-top:8px;font-family:Georgia,"Times New Roman",serif}
+.def{font-size:17px;line-height:1.9;color:#4a423a;text-align:center;margin-top:16px}
+.def.quiz{font-size:19px;margin-top:0;color:#2f2a24;line-height:1.95}
+.meta{display:flex;justify-content:center;gap:14px;font-size:12px;color:#ab9f8c;margin-top:18px}
+.hint{display:flex;align-items:center;justify-content:center;gap:8px;background:#fbf7f2;border-radius:14px;padding:12px;font-size:15px;color:#7a6d5b;letter-spacing:2px}
+.hint b{color:#b8462f;font-size:20px;letter-spacing:2px}
+input.answer{width:100%;font-size:26px;text-align:center;letter-spacing:6px;padding:15px 12px;border-radius:16px;border:1.5px solid #e3dccf;background:#fbf9f6;color:#25211c;outline:none;font-family:inherit}
+input.answer:focus{border-color:#b8462f;background:#fff}
+.row{display:flex;gap:10px;flex:none}
+button{font-family:inherit;font-size:16px;border-radius:999px;border:none;cursor:pointer;padding:14px 18px;transition:transform .08s,opacity .15s;flex:none}
+.row button{flex:1}
+button:active{transform:scale(.98)}
+.primary{background:#b8462f;color:#fff;font-weight:600}
+.ghost{background:transparent;color:#7a6d5b;border:1.5px solid #e0d8c9}
+.tip{font-size:13px;color:#a99c88;text-align:center;line-height:1.7}
+.fb{font-size:15px;text-align:center;margin-top:16px;line-height:1.8}
+.fb.good{color:#2f7d4f}
+.fb.wrong{color:#b8462f}
+.fb b{font-size:20px;letter-spacing:3px}
+.groups{display:flex;flex-direction:column;gap:10px}
+.gitem{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:16px;padding:15px 18px;box-shadow:0 1px 4px rgba(80,60,30,.05);cursor:pointer;border:1.5px solid transparent}
+.gitem:active{border-color:#e6ddcd}
+.gname{font-size:16px;font-weight:500}
+.cta{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:18px;padding:18px 20px;box-shadow:0 1px 4px rgba(80,60,30,.06);border-left:3px solid #b8462f;cursor:pointer}
+.cta:active{background:#fdfbf8}
+.ctaTitle{font-size:18px;font-weight:600;letter-spacing:1px}
+.ctaSub{font-size:13px;color:#a99c88;margin-top:4px}
+.ctaArrow{color:#c9bda9;font-size:22px;padding-left:12px}
+.gmeta{font-size:13px;color:#a99c88}
+.bar{height:3px;background:#efe9df;border-radius:2px;overflow:hidden;flex:none}
+.bar>i{display:block;height:100%;background:#b8462f;transition:width .3s}
+.big{font-size:46px;font-weight:600;text-align:center;color:#b8462f}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:#fff;border-radius:16px;padding:14px 16px}
+.stat .n{font-size:24px;font-weight:600}
+.stat .l{font-size:12px;color:#a99c88;margin-top:2px}
+.wrongList{display:flex;flex-direction:column;gap:8px}
+.wrongItem{display:flex;justify-content:space-between;gap:12px;font-size:15px;padding:10px 14px;background:#fbf7f2;border-radius:12px}
+.wrongItem em{font-style:normal;color:#b8462f;font-weight:600;letter-spacing:2px;flex:none}
+.wrongItem span{color:#8a7d6b;font-size:12px;text-align:right;line-height:1.6}
+.noscroll .card{flex:1 1 auto;min-height:0;padding:16px 14px;overflow:hidden}
+.noscroll .def.quiz{font-size:clamp(15px,3.9vh,19px);line-height:1.75}
+.noscroll .fb{margin-top:10px;font-size:14px}
+body.kb #app{padding:8px 12px calc(8px + env(safe-area-inset-bottom))}
+body.kb header{padding-bottom:4px}
+body.kb .tip{font-size:12px;padding-top:4px}
+.gloss{text-align:center;font-size:13px;color:#8a7d6b;background:#fbf7f2;border-radius:10px;padding:8px 10px;margin-top:14px;line-height:1.7}
+.extra{margin-top:14px;font-size:12.5px;color:#8a7d6b;line-height:1.7;text-align:left;display:flex;flex-direction:column;gap:6px;border-top:1px solid #f0eade;padding-top:12px}
+.extra b{color:#6f6353;font-weight:600;margin-right:5px}
+details.story{margin-top:10px;font-size:12.5px;color:#8a7d6b;text-align:left}
+details.story summary{cursor:pointer;color:#b8462f;outline:none}
+.storyBody{margin-top:6px;line-height:1.75}
+.src{font-size:12px;color:#ab9f8c;text-align:center;margin-top:12px;line-height:1.65;padding:0 6px}
+.back{flex:none;width:32px;height:32px;border-radius:50%;background:transparent;color:#8a7d6b;font-size:24px;line-height:1;padding:0 0 3px;display:flex;align-items:center;justify-content:center;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none;-webkit-tap-highlight-color:transparent}
+.back.holding{background:#efe7da;color:#b8462f}
+.gmain{flex:1;min-width:0}
+.gbar{display:flex;height:6px;background:#f2ece2;border-radius:3px;overflow:hidden;margin:8px 0 6px}
+.gbar .m{background:#b8462f}
+.gbar .s{background:#e9c6bb}
+.done{font-size:11px;color:#2f7d4f;background:#e9f5ec;border-radius:6px;padding:2px 6px;margin-left:6px;font-weight:500}
+.done.light{color:#8a7d6b;background:#f3ece0}
+.todayRow{display:flex;gap:18px;justify-content:center;font-size:13px;color:#8a7d6b}
+.todayRow b{color:#b8462f;font-weight:600}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(80px + env(safe-area-inset-bottom));background:rgba(45,40,34,.9);color:#fff;font-size:13px;padding:8px 14px;border-radius:999px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99}
+.toast.on{opacity:1}
+.catcard{padding:14px}
+.catcard .gname{font-size:16px}
+.fade{animation:fade .22s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.opts{display:flex;flex-direction:column;gap:10px;padding:16px 18px 24px}
+.opt{padding:14px 16px;border:1px solid #e3d5d5;border-radius:14px;font-size:19px;text-align:center;background:#fff}
+.opt.right{border-color:#2e7d32;background:#e8f5e9;color:#2e7d32}
+.opt.wrong{border-color:#c62828;background:#fdecea;color:#c62828}
+.opt.dim{opacity:.45}
+.cmp{margin:0 18px 24px;border-top:1px solid #ece1d4;padding-top:12px}
+.cmpRow{padding:10px 12px;border-radius:12px;margin-bottom:8px;font-size:14px;line-height:1.5}
+.cmpRow.bad{background:#fdecea;color:#8a2b23}
+.cmpRow.good{background:#e8f5e9;color:#245c2a}
+.cmpGloss{margin-top:4px;font-size:13px;opacity:.85}
+.cmpDef{margin-top:2px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const GROUP = 15;
+const app = document.getElementById('app');
+let WORDS = [], STATE = {}, SM = null;
+let S = { view: 'home', cat: '', g: 0, li: 0, queue: [], qi: 0, wrong: [], answered: false, ok: false, results: [], source: '', t0: 0, nextDue: 0 };
+const SET_KEY = 'chengyu_settings';
+let SET = { mode: 'write' };
+try { const raw = localStorage.getItem(SET_KEY); if (raw) { const o = JSON.parse(raw); if (o && o.mode) SET.mode = o.mode; } } catch (e) {}
+function saveSet() { try { localStorage.setItem(SET_KEY, JSON.stringify(SET)); } catch (e) {} }
+function setMode(m) { SET.mode = m; saveSet(); render(); }
+function openSettings() { S.view = 'settings'; render(); }
+
+function chunk(a, n) { const o = []; for (let i = 0; i < a.length; i += n) o.push(a.slice(i, i + n)); return o; }
+function groupsOf(list) {
+  const gs = chunk(list, GROUP);
+  if (gs.length > 1 && gs[gs.length - 1].length < 5) {
+    const tail = gs.pop();
+    gs[gs.length - 1] = gs[gs.length - 1].concat(tail);
+  }
+  return gs;
+}
+function shuffle(a) { const r = a.slice(); for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = r[i]; r[i] = r[j]; r[j] = t; } return r; }
+function norm(s) { return (s || '').replace(/[^\u4e00-\u9fa5]/g, ''); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function api(path, opts) { return fetch(path, opts).then(function (r) { if (r.status === 401) { location.href = '/login'; throw new Error('login'); } return r.json(); }); }
+
+function fit() {
+  const vv = window.visualViewport;
+  if (!vv) return;
+  const rs = document.documentElement.style;
+  rs.setProperty('--vh', vv.height + 'px');
+  rs.setProperty('--vtop', vv.offsetTop + 'px');
+  const kb = window.innerHeight - vv.height > 120;
+  if (document.body) document.body.classList.toggle('kb', kb);
+}
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', fit);
+  window.visualViewport.addEventListener('scroll', fit);
+}
+fit();
+
+function render() {
+  if (S.view === 'home') return home();
+  if (S.view === 'list') return list();
+  if (S.view === 'learn') return learn();
+  if (S.view === 'settings') return settingsView();
+  if (S.view === 'quiz') return SET.mode === 'choice' ? quizChoice() : quiz();
+  if (S.view === 'result') return result();
+  if (S.view === 'stats') return stats();
+}
+
+function startQueue(items, source, g) {
+  if (!items.length) return;
+  S = { view: 'learn', cat: S.cat || '', g: g == null ? 0 : g, li: 0, queue: items.slice(), qi: 0, wrong: [], answered: false, ok: false, results: [], source: source || '', t0: 0, nextDue: 0 };
+  render();
+}
+function openGroup(i) { const cat = S.cat || 'A'; startQueue(shuffle(groupsOf(wordsOf(cat))[i]), '第 ' + (i + 1) + ' 组', i); }
+async function todayReview(btn) {
+  if (btn) btn.disabled = true;
+  let rec = [];
+  try { rec = await api('/api/recommend?limit=200'); } catch (e) {}
+  if (!rec.length) { if (btn) btn.disabled = false; toast('今天没有要复习的'); return; }
+  startQueue(rec, '今日复习', -1);
+}
+function nextLearn() { if (S.li < S.queue.length - 1) { S.li++; render(); } }
+function prevLearn() { if (S.li > 0) { S.li--; render(); } }
+function startQuiz() {
+  if (SET.mode === 'off') { finishGroup(); return; }
+  S.view = 'quiz'; S.queue = shuffle(S.queue); S.qi = 0; S.results = []; S.wrong = []; S.answered = false; S.t0 = Date.now();
+  render();
+}
+async function finishGroup() {
+  const items = S.queue.slice();
+  toast('记录中…');
+  for (let i = 0; i < items.length; i++) {
+    try {
+      const r = await api('/api/review', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ word: items[i].word, skip: true, ok: false, ms: 0 }) });
+      if (r && r.item) STATE[items[i].word] = r.item;
+    } catch (e) {}
+  }
+  backHome(); toast('已记录，明天复习');
+}
+function settingsView() {
+  const opts = [['write', '默写', '看释义，手写成语'], ['choice', '选词', '看释义，四选一'], ['off', '关闭', '只看卡片，不做题']];
+  let rows = '';
+  opts.forEach(function (o) {
+    const on = SET.mode === o[0];
+    rows += '<div class="gitem" onclick="setMode(&quot;' + o[0] + '&quot;)"><div class="gmain"><div class="gname">' + o[1] + (on ? '<span class="done">当前</span>' : '') + '</div><div class="gmeta">' + o[2] + '</div></div></div>';
+  });
+  app.innerHTML = '<header>' + backBtn() + '<div class="brand">设置</div><div class="sub">学习后做什么</div></header>' +
+    '<div class="scroll"><div class="groups">' + rows + '</div></div>';
+}
+function choiceOpts(it) {
+  const pool = WORDS.filter(function (w) { return w.word !== it.word && (w.cat || 'A') === (it.cat || 'A'); });
+  const picks = shuffle(pool.slice()).slice(0, 3).map(function (w) { return w.word; });
+  return shuffle(picks.concat([it.word]));
+}
+function quizChoice() {
+  const it = S.queue[S.qi];
+  if (S.optsFor !== S.qi || !S.opts) { S.opts = choiceOpts(it); S.optsFor = S.qi; }
+  let opts = '';
+  S.opts.forEach(function (w) {
+    let cls = 'opt';
+    if (S.answered) {
+      if (w === it.word) cls += ' right';
+      else if (w === S.picked) cls += ' wrong';
+      else cls += ' dim';
+    }
+    opts += '<div class="' + cls + '" data-w="' + esc(w) + '" onclick="answerChoice(this.dataset.w)">' + esc(w) + '</div>';
+  });
+  app.innerHTML = '<header>' + backBtn() + '<div class="brand">' + esc(S.source) + ' · 选词</div><div class="sub">' + (S.qi + 1) + ' / ' + S.queue.length + '</div></header>' +
+    '<div class="bar"><i style="width:' + ((S.qi + 1) / S.queue.length * 100) + '%"></i></div>' +
+    '<div class="scroll"><div class="card center"><div class="def quiz">' + esc(it.def) + '</div></div><div class="opts">' + opts + '</div>' + cmpHtml(it) + '</div>';
+}
+function cmpHtml(it) {
+  if (!S.answered || S.ok || !S.picked) return '';
+  const picked = WORDS.filter(function (w) { return w.word === S.picked; })[0] || { word: S.picked, gloss: '', def: '' };
+  const row = function (cls, label, w) {
+    return '<div class="cmpRow ' + cls + '"><b>' + label + '：' + esc(w.word) + '</b>' +
+      (w.gloss ? '<div class="cmpGloss">' + esc(w.gloss) + '</div>' : '') +
+      '<div class="cmpDef">' + esc(w.def || '') + '</div></div>';
+  };
+  return '<div class="cmp">' + row('bad', '你选的', picked) + row('good', '正确答案', it) + '</div>';
+}
+async function answerChoice(w) {
+  if (S.answered) return;
+  const it = S.queue[S.qi];
+  S.ok = (w === it.word);
+  S.picked = w;
+  S.answered = true;
+  S.results.push(S.ok);
+  if (!S.ok) S.wrong.push({ word: it.word, def: it.def, pinyin: it.pinyin });
+  render();
+  try {
+    const r = await api('/api/review', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ word: it.word, ok: S.ok, ms: Date.now() - (S.t0 || Date.now()) }) });
+    if (r && r.item) { STATE[it.word] = r.item; if (r.summary) SM = r.summary; }
+  } catch (e) {}
+  setTimeout(nextQuiz, S.ok ? 800 : 3600);
+}
+function retryWrong() {
+  if (!S.wrong.length) return;
+  S.queue = shuffle(S.wrong.slice()); S.qi = 0; S.answered = false; S.wrong = []; S.results = []; S.t0 = Date.now(); S.view = 'quiz';
+  render();
+}
+function backBtn() {
+  return '<button class="back" onpointerdown="pressStart(event)" onpointerup="pressEnd(event)" onpointercancel="pressEnd(event)" onpointerleave="pressEnd(event)" oncontextmenu="return false">‹</button>';
+}
+let pressTimer = null;
+function pressStart(e) {
+  e.preventDefault();
+  try { const sel = window.getSelection(); if (sel) sel.removeAllRanges(); } catch (err) {}
+  const b = e.currentTarget;
+  b.classList.add('holding');
+  pressTimer = setTimeout(function () { pressTimer = null; b.classList.remove('holding'); backHome(); }, 700);
+}
+function pressEnd(e) {
+  const b = e.currentTarget;
+  if (b) b.classList.remove('holding');
+  if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; toast('长按返回主页'); }
+}
+function toast(t) {
+  let el = document.getElementById('toast');
+  if (!el) { el = document.createElement('div'); el.id = 'toast'; el.className = 'toast'; document.body.appendChild(el); }
+  el.textContent = t; el.classList.add('on');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function () { el.classList.remove('on'); }, 1200);
+}
+function backHome() { S = { view: 'home', cat: '', g: 0, li: 0, queue: [], qi: 0, wrong: [], answered: false, ok: false, results: [], source: '', t0: 0, nextDue: 0 }; refreshSummary(); render(); }
+function refreshSummary() { api('/api/summary').then(function (x) { SM = x; render(); }).catch(function () {}); }
+
+function wordsOf(cat) {
+  return WORDS.filter(function (w) { return (w.cat || 'A') === cat; });
+}
+function home() {
+  let cards = '';
+  const cats = Array.from(new Set(WORDS.map(function (w) { return w.cat || 'A'; }))).sort();
+  cats.forEach(function (cat) {
+    const list = wordsOf(cat);
+    if (!list.length) return;
+    const gs = groupsOf(list);
+    const seen = list.filter(function (w) { return STATE[w.word] && STATE[w.word].seen > 0; }).length;
+    const mast = list.filter(function (w) { return STATE[w.word] && STATE[w.word].interval >= 7; }).length;
+    const doneG = gs.filter(function (g) { return g.every(function (w) { return STATE[w.word] && STATE[w.word].seen > 0; }); }).length;
+    const p1 = mast / list.length * 100, p2 = seen / list.length * 100;
+    cards += '<div class="gitem catcard" data-cat="' + cat + '" onclick="openCat(this.dataset.cat)"><div class="gmain">' +
+      '<div class="gname">首字母 ' + cat + (doneG === gs.length ? '<span class="done">全部学完</span>' : '') + '</div>' +
+      '<div class="gbar"><i class="m" style="width:' + p1 + '%"></i><i class="s" style="width:' + (p2 - p1) + '%"></i></div>' +
+      '<div class="gmeta">' + list.length + ' 词 · ' + gs.length + ' 组 · 已学 ' + seen + ' · 熟练 ' + mast + '</div>' +
+      '</div><div class="gmeta">›</div></div>';
+  });
+  const due = SM ? SM.due : 0;
+  const nw = SM ? (SM.todayNew || 0) : 0;
+  const rv = SM ? (SM.todayReview || 0) : 0;
+  app.innerHTML =
+    '<header><div class="brand">习语</div><div class="sub">' + (SM ? SM.seen + '/' + SM.total + ' 已学' : '') + ' · <span onclick="openSettings()" style="text-decoration:underline">设置</span></div></header>' +
+    '<div class="scroll">' +
+      '<div class="cta" onclick="todayReview(this)"><div><div class="ctaTitle">今日复习</div><div class="ctaSub">' + (due ? due + ' 个待复习' : '暂无待复习') + '</div></div><div class="ctaArrow">›</div></div>' +
+      '<div class="todayRow"><span>今日新学 <b>' + nw + '</b></span><span>今日复习 <b>' + rv + '</b></span></div>' +
+      '<div class="groups">' + cards + '</div>' +
+      '<div class="row"><button class="ghost" onclick="openStats()">学习统计</button></div>' +
+    '</div>';
+}
+
+function openStats() { S.view = 'stats'; render(); }
+function openCat(cat) { S.cat = cat; S.view = 'list'; render(); }
+function list() {
+  const cat = S.cat || 'A';
+  const words = wordsOf(cat);
+  const gs = groupsOf(words);
+  const info = gs.map(function (g, i) {
+    const seen = g.filter(function (w) { return STATE[w.word] && STATE[w.word].seen > 0; }).length;
+    const mast = g.filter(function (w) { return STATE[w.word] && STATE[w.word].interval >= 7; }).length;
+    return { i: i, seen: seen, mast: mast, n: g.length, full: seen === g.length };
+  });
+  info.sort(function (a, b) { return (a.full ? 1 : 0) - (b.full ? 1 : 0) || a.i - b.i; });
+  let rows = '', next = -1;
+  info.forEach(function (x) {
+    if (next < 0 && !x.full) next = x.i;
+    const p1 = x.mast / x.n * 100, p2 = x.seen / x.n * 100;
+    const done = x.mast === x.n ? '<span class="done">已熟练</span>' : (x.full ? '<span class="done light">学完</span>' : '');
+    rows += '<div class="gitem" onclick="openGroup(' + x.i + ')"><div class="gmain"><div class="gname">' + '第 ' + (x.i + 1) + ' 组' + done + '</div>' +
+      '<div class="gbar"><i class="m" style="width:' + p1 + '%"></i><i class="s" style="width:' + (p2 - p1) + '%"></i></div>' +
+      '<div class="gmeta">已学 ' + x.seen + '/' + x.n + ' · 熟练 ' + x.mast + '</div></div><div class="gmeta">›</div></div>';
+  });
+  app.innerHTML =
+    '<header>' + backBtn() + '<div class="brand">' + '首字母 ' + cat + '</div><div class="sub">' + words.length + ' 词</div></header>' +
+    '<div class="scroll">' +
+      (next >= 0 ? '<div class="cta" onclick="openGroup(' + next + ')"><div><div class="ctaTitle">继续学习</div><div class="ctaSub">' + cat + ' 类 第 ' + (next + 1) + ' 组</div></div><div class="ctaArrow">›</div></div>' : '') +
+      '<div class="groups">' + rows + '</div>' +
+    '</div>';
+}
+
+function extraHtml(it) {
+  const parts = [];
+  if (it.example) parts.push('<div><b>例句</b>' + esc(it.example) + '</div>');
+  if (it.similar && it.similar.length) parts.push('<div><b>近义</b>' + esc(it.similar.join(' / ')) + '</div>');
+  if (it.opposite && it.opposite.length) parts.push('<div><b>反义</b>' + esc(it.opposite.join(' / ')) + '</div>');
+  if (it.usage) parts.push('<div><b>用法</b>' + esc(it.usage) + '</div>');
+  let s = '';
+  if (parts.length) s += '<div class="extra">' + parts.join('') + '</div>';
+  if (it.story && it.story.length) s += '<details class="story"><summary>典故</summary><div class="storyBody">' + esc(it.story.join(' ')) + '</div></details>';
+  return s;
+}
+function learn() {
+  const it = S.queue[S.li];
+  const st = STATE[it.word] || {};
+  const last = S.li === S.queue.length - 1;
+  const meta = it.word.length + ' 字' + (st.seen ? ' · 学过 ' + st.seen + ' 次' + (st.acc != null ? ' · 正确率 ' + st.acc + '%' : '') : ' · 新词');
+  app.innerHTML =
+    '<header>' + backBtn() + '<div class="brand">' + esc(S.source) + ' · 学习</div><div class="sub">' + (S.li + 1) + ' / ' + S.queue.length + '</div></header>' +
+    '<div class="bar"><i style="width:' + ((S.li + 1) / S.queue.length * 100) + '%"></i></div>' +
+    '<div class="scroll"><div class="card center fade"><div class="word">' + it.word + '</div><div class="pinyin">' + esc(it.pinyin) + '</div>' + (it.gloss ? '<div class="gloss">' + esc(it.gloss) + '</div>' : '') + '<div class="def">' + esc(it.def) + '</div>' + (it.quote ? '<div class="src">' + esc(it.quote) + '</div>' : '') + extraHtml(it) + '<div class="meta"><span>' + meta + '</span></div></div></div>' +
+    '<div class="row"><button class="ghost" onclick="prevLearn()"' + (S.li === 0 ? ' disabled' : '') + '>上一个</button>' +
+    (last ? '<button class="primary" onclick="' + (SET.mode === 'off' ? 'finishGroup()' : 'startQuiz()') + '">' + (SET.mode === 'off' ? '完成本组' : (SET.mode === 'choice' ? '开始选择' : '开始默写')) + '</button>' : '<button class="primary" onclick="nextLearn()">下一个</button>') + '</div>';
+}
+
+function initial(it) {
+  return (it.pinyin || '').normalize('NFD').replace(/[̀-ͯ]/g, '').charAt(0).toUpperCase();
+}
+function whenText(due) {
+  const d = due ? Math.max(0, due - Date.now()) : 0;
+  if (!d) return '稍后';
+  return d >= 86400000 ? Math.round(d / 86400000) + ' 天后' : Math.max(1, Math.round(d / 60000)) + ' 分钟后';
+}
+function quiz() {
+  app.innerHTML =
+    '<header>' + backBtn() + '<div class="brand">' + esc(S.source) + ' · 默写</div><div class="sub" id="qsub"></div></header>' +
+    '<div class="bar"><i id="qbar" style="width:0"></i></div>' +
+    '<div class="scroll noscroll"><div class="card center" id="qcard"><div class="def quiz" id="qdef"></div><div id="qfb"></div></div></div>' +
+    '<input class="answer" id="ans" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done">' +
+    '<div class="tip" id="qtip" style="flex:none;padding-top:8px"></div>';
+  const el = document.getElementById('ans');
+  const onEnter = function (e) {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+      e.preventDefault(); e.stopPropagation();
+      if (S.answered) nextQuiz(); else submit();
+    }
+  };
+  el.addEventListener('keydown', onEnter);
+  paintQuiz();
+  try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+}
+function paintQuiz() {
+  const it = S.queue[S.qi];
+  document.getElementById('qsub').textContent = (S.qi + 1) + ' / ' + S.queue.length;
+  document.getElementById('qbar').style.width = ((S.qi + (S.answered ? 1 : 0)) / S.queue.length * 100) + '%';
+  document.getElementById('qdef').textContent = it.def;
+  document.getElementById('qcard').className = 'card center' + (S.answered ? (S.ok ? ' ok' : ' bad') : '');
+  const fb = document.getElementById('qfb');
+  const el = document.getElementById('ans');
+  if (!S.answered) {
+    fb.innerHTML = '';
+    el.value = '';
+    el.placeholder = initial(it);
+    document.getElementById('qtip').textContent = '不会就空着按回车';
+  } else {
+    const w = whenText(S.nextDue);
+    fb.innerHTML = S.ok
+      ? '<div class="fb good">✓ 正确 · ' + w + '再复习</div>'
+      : '<div class="fb wrong">✗ 正确答案 <b>' + it.word + '</b><br><span style="color:#8a7d6b;font-size:13px">' + esc(it.pinyin) + ' · ' + w + '再复习</span></div>';
+    document.getElementById('qtip').textContent = '按回车继续';
+  }
+}
+async function submit() {
+  if (S.answered) return;
+  const el = document.getElementById('ans');
+  const val = norm(el ? el.value : '');
+  const it = S.queue[S.qi];
+  const idx = S.qi;
+  S.ok = !!val && val === norm(it.word);
+  S.answered = true;
+  S.results.push(S.ok);
+  if (!S.ok) S.wrong.push({ word: it.word, def: it.def, pinyin: it.pinyin });
+  paintQuiz();
+  try {
+    const r = await api('/api/review', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ word: it.word, ok: S.ok, ms: Date.now() - (S.t0 || Date.now()) }) });
+    if (r && r.item) { S.nextDue = r.item.due; STATE[it.word] = r.item; if (r.summary) SM = r.summary; if (S.qi === idx && S.answered) paintQuiz(); }
+  } catch (e) {}
+}
+function skip() { submitWith(''); }
+function submitWith(v) {
+  const el = document.getElementById('ans');
+  if (el) el.value = v;
+  submit();
+}
+function nextQuiz() {
+  if (S.qi < S.queue.length - 1) {
+    S.qi++; S.answered = false; S.ok = false; S.nextDue = 0; S.t0 = Date.now();
+    if (SET.mode === 'choice') { S.optsFor = -1; render(); } else { paintQuiz(); }
+  } else {
+    S.view = 'result'; refreshSummary(); render();
+  }
+}
+
+function result() {
+  const total = S.results.length || 1;
+  const right = S.results.filter(Boolean).length;
+  const pct = Math.round(right / total * 100);
+  let list = '';
+  S.wrong.forEach(function (w) { list += '<div class="wrongItem"><em>' + w.word + '</em><span>' + esc(w.pinyin) + '<br>' + esc(w.def) + '</span></div>'; });
+  app.innerHTML =
+    '<header><div class="brand">' + esc(S.source) + ' · 结果</div><div class="sub">' + right + ' / ' + total + '</div></header>' +
+    '<div class="scroll">' +
+      '<div class="card center"><div class="big">' + pct + '%</div><div class="tip" style="margin-top:8px">' + (pct === 100 ? '全对，漂亮' : pct >= 80 ? '不错，错的再看一眼' : '再来一遍会更稳') + '</div></div>' +
+      (S.wrong.length ? '<div class="tip" style="text-align:left;padding-left:4px">错的 ' + S.wrong.length + ' 个</div><div class="wrongList">' + list + '</div>' : '') +
+    '</div>' +
+    '<div class="row">' + (S.wrong.length ? '<button class="primary" onclick="retryWrong()">重练错的</button>' : '') + '<button class="ghost" onclick="backHome()">返回</button></div>';
+}
+
+function stats() {
+  const s = SM || { total: WORDS.length, seen: 0, mastered: 0, due: 0, acc7: null, reviews7: 0, today: 0, todayAcc: null, streak: 0, weak: [] };
+  let weak = '';
+  (s.weak || []).forEach(function (w) { weak += '<div class="wrongItem"><em>' + w.word + '</em><span>' + (w.acc == null ? '新词' : '正确率 ' + w.acc + '%') + '</span></div>'; });
+  app.innerHTML =
+    '<header><div class="brand">学习统计</div><div class="sub">连续 ' + s.streak + ' 天</div></header>' +
+    '<div class="scroll">' +
+      '<div class="stats">' +
+        '<div class="stat"><div class="n">' + s.seen + '/' + s.total + '</div><div class="l">已学</div></div>' +
+        '<div class="stat"><div class="n">' + s.mastered + '</div><div class="l">熟悉（间隔 7 天以上）</div></div>' +
+        '<div class="stat"><div class="n">' + s.due + '</div><div class="l">待复习</div></div>' +
+        '<div class="stat"><div class="n">' + (s.acc7 == null ? '—' : s.acc7 + '%') + '</div><div class="l">近 7 天正确率</div></div>' +
+        '<div class="stat"><div class="n">' + s.today + '</div><div class="l">今日已练</div></div>' +
+        '<div class="stat"><div class="n">' + s.reviews7 + '</div><div class="l">近 7 天练习量</div></div>' +
+      '</div>' +
+      (weak ? '<div class="tip" style="text-align:left;padding-left:4px;margin-top:6px">最不熟的几个</div><div class="wrongList">' + weak + '</div>' : '') +
+    '</div>' +
+    '<div class="row"><button class="ghost" onclick="backHome()">返回</button></div>';
+}
+
+document.addEventListener('keydown', function (e) {
+  if (e.target && e.target.tagName === 'INPUT') return;
+  if (S.view === 'quiz' && S.answered && e.key === 'Enter') { e.preventDefault(); nextQuiz(); }
+  if (S.view === 'learn') {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prevLearn(); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); nextLearn(); }
+  }
+  if (S.view === 'learn' && e.key === 'Enter' && S.li === S.queue.length - 1) { e.preventDefault(); if (SET.mode === 'off') finishGroup(); else startQuiz(); }
+});
+document.addEventListener('gesturestart', function (e) { e.preventDefault(); }, { passive: false });
+document.addEventListener('dblclick', function (e) { e.preventDefault(); }, { passive: false });
+
+api('/api/words').then(function (w) { WORDS = w; return api('/api/state'); }).then(function (st) { (st || []).forEach(function (x) { STATE[x.word] = x; }); return api('/api/summary'); }).then(function (x) { SM = x; render(); }).catch(function () { render(); });
+</script>
+</body>
+</html>
