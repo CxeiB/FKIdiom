@@ -273,9 +273,15 @@ class Handler(SimpleHTTPRequestHandler):
         q = parse_qs(u.query)
         sess = get_session(self.sid())
 
+        if u.path == "/notice":
+            self.path = "/notice.html"
+            return super().do_GET()
+
         if u.path == "/login":
             if not CONF:
                 return self.send_json({"error": "oidc not configured"}, 500)
+            if (q.get("accept") or [""])[0] != "1":
+                return self.redirect("/notice")
             state = secrets.token_urlsafe(24)
             verifier = secrets.token_urlsafe(48)
             PENDING[state] = (verifier, time.time())
@@ -342,7 +348,7 @@ class Handler(SimpleHTTPRequestHandler):
             return self.send_json({"error": "not found"}, 404)
 
         if not sess:
-            return self.redirect("/login")
+            return self.redirect("/notice")
         if u.path == "/":
             self.path = "/index.html"
         super().do_GET()
