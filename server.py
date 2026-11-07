@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json, os, sqlite3, threading, time, secrets, hashlib, base64, urllib.parse, urllib.request
+import json, os, sqlite3, threading, time, secrets, hashlib, base64, gzip, urllib.parse, urllib.request
 from datetime import datetime, timezone, timedelta
 try:
     from zoneinfo import ZoneInfo
@@ -228,6 +228,8 @@ def claim_legacy(uid):
         c.execute("INSERT OR REPLACE INTO meta(k,v) VALUES('claimed',?)", (uid,))
 
 class Handler(SimpleHTTPRequestHandler):
+    protocol_version = "HTTP/1.1"
+
     def __init__(self, *a, **kw):
         super().__init__(*a, directory=BASE, **kw)
 
@@ -244,8 +246,14 @@ class Handler(SimpleHTTPRequestHandler):
 
     def send_json(self, obj, code=200):
         body = json.dumps(obj, ensure_ascii=False).encode()
+        gz = "gzip" in (self.headers.get("Accept-Encoding") or "") and len(body) > 1024
+        if gz:
+            body = gzip.compress(body, 5)
         self.send_response(code)
         self.send_header("Content-Type", "application/json; charset=utf-8")
+        if gz:
+            self.send_header("Content-Encoding", "gzip")
+            self.send_header("Vary", "Accept-Encoding")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
@@ -338,10 +346,45 @@ class Handler(SimpleHTTPRequestHandler):
                 return self.send_json(WORDS)
             if u.path == "/api/summary":
                 return self.send_json(summary(sess["uid"]))
+            if u.path == "/api/bootstrap":
+                with db() as c:
+                    rows = c.execute("SELECT word, seen, correct, interval, due, ease, reps, lapses FROM items WHERE uid=?", (sess["uid"],)).fetchall()
+                st = [{"word": r["word"], "seen": r["seen"], "correct": r["correct"],
+                       "acc": round(100 * r["correct"] / r["seen"]) if r["seen"] else None,
+                       "interval": round(r["interval"], 3), "due": r["due"],
+                       "ease": round(r["ease"], 2), "reps": r["reps"], "lapses": r["lapses"]} for r in rows]
+                return self.send_json({"state": st, "summary": summary(sess["uid"])})
+            if u.path == "/api/words.gz":
+                with open(os.path.join(BASE, "words.json"), "rb") as f:
+                    raw = f.read()
+                import hashlib as _h
+                etag = '"' + _h.md5(raw).hexdigest() + '"'
+                if self.headers.get("If-None-Match") == etag:
+                    self.send_response(304)
+                    self.send_header("ETag", etag)
+                    self.send_header("Content-Length", "0")
+                    self.end_headers()
+                    return
+                body = gzip.compress(raw, 6) if "gzip" in (self.headers.get("Accept-Encoding") or "") else raw
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("ETag", etag)
+                self.send_header("Cache-Control", "private, max-age=86400")
+                if body is not raw:
+                    self.send_header("Content-Encoding", "gzip")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+                return
             if u.path == "/api/state":
                 with db() as c:
-                    items = [row_to_item(r) for r in c.execute("SELECT * FROM items WHERE uid=?", (sess["uid"],))]
-                return self.send_json(items)
+                    rows = c.execute("SELECT word, seen, correct, interval, due, ease, reps, lapses FROM items WHERE uid=?", (sess["uid"],)).fetchall()
+                return self.send_json([{
+                    "word": r["word"], "seen": r["seen"], "correct": r["correct"],
+                    "acc": round(100 * r["correct"] / r["seen"]) if r["seen"] else None,
+                    "interval": round(r["interval"], 3), "due": r["due"],
+                    "ease": round(r["ease"], 2), "reps": r["reps"], "lapses": r["lapses"],
+                } for r in rows])
             if u.path == "/api/recommend":
                 limit = int(q.get("limit", ["15"])[0])
                 return self.send_json(recommend(sess["uid"], max(1, min(60, limit))))

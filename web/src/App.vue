@@ -36,11 +36,21 @@ function esc(s) { return String(s == null ? '' : s) }
 
 function toast(t) { toastMsg.value = t; clearTimeout(toastTimer); toastTimer = setTimeout(() => { toastMsg.value = '' }, 1400) }
 
+async function getWords() {
+  try {
+    const raw = localStorage.getItem('fk_words_cache')
+    const at = Number(localStorage.getItem('fk_words_at') || 0)
+    if (raw && Date.now() - at < 7 * 864e5) return JSON.parse(raw)
+  } catch (e) {}
+  const w = await api('/api/words')
+  try { localStorage.setItem('fk_words_cache', JSON.stringify(w)); localStorage.setItem('fk_words_at', String(Date.now())) } catch (e) {}
+  return w
+}
 async function load() {
-  WORDS.value = await api('/api/words')
-  const st = await api('/api/state')
-  const map = {}; (st || []).forEach(x => { map[x.word] = x }); STATE.value = map
-  SM.value = await api('/api/summary')
+  const [w, boot] = await Promise.all([getWords(), api('/api/bootstrap')])
+  WORDS.value = w
+  const map = {}; (boot.state || []).forEach(x => { map[x.word] = x }); STATE.value = map
+  SM.value = boot.summary
 }
 
 function openCat(c) { cat.value = c; view.value = 'list' }
