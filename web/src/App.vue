@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { api, post } from './api'
 
 const WORDS = ref([])
@@ -24,14 +24,13 @@ const feedback = ref('')
 const toastMsg = ref('')
 let toastTimer = null
 
-const SET = ref({ mode: 'write' })
-try { const raw = localStorage.getItem('fk_set'); if (raw) SET.value = Object.assign({ mode: 'write' }, JSON.parse(raw)) } catch (e) {}
+const SET = ref({ mode: 'write', chunk: 10 })
+try { const raw = localStorage.getItem('fk_set'); if (raw) SET.value = Object.assign({ mode: 'write', chunk: 10 }, JSON.parse(raw)) } catch (e) {}
 function saveSet() { try { localStorage.setItem('fk_set', JSON.stringify(SET.value)) } catch (e) {} }
 
-const CHUNK = 10
 const letters = computed(() => Array.from(new Set(WORDS.value.map(w => w.cat || 'A'))).sort())
 function wordsOf(c) { return WORDS.value.filter(w => (w.cat || 'A') === c) }
-function groupsOf(list) { const out = []; for (let i = 0; i < list.length; i += CHUNK) out.push(list.slice(i, i + CHUNK)); return out }
+function groupsOf(list) { const n = Math.max(1, Number(SET.value.chunk) || 10); const out = []; for (let i = 0; i < list.length; i += n) out.push(list.slice(i, i + n)); return out }
 function shuffle(a) { const x = a.slice(); for (let i = x.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [x[i], x[j]] = [x[j], x[i]] } return x }
 function esc(s) { return String(s == null ? '' : s) }
 
@@ -77,6 +76,7 @@ function startQuiz() {
   queue.value = shuffle(queue.value); qi.value = 0; results.value = []; wrong.value = []
   answered.value = false; picked.value = ''; t0.value = Date.now()
   view.value = SET.value.mode === 'choice' ? 'choice' : 'write'
+  if (SET.value.mode === 'choice') buildOptions(queue.value[0])
 }
 async function finishGroup() {
   toast('记录中…')
@@ -87,9 +87,14 @@ async function finishGroup() {
 const qItem = computed(() => queue.value[qi.value] || {})
 const options = ref([])
 function buildOptions(it) {
-  const pool = WORDS.value.filter(w => w.word !== it.word && (w.cat || 'A') === (it.cat || 'A'))
+  if (!it || !it.word) { options.value = []; return }
+  let pool = WORDS.value.filter(w => w.word !== it.word && (w.cat || 'A') === (it.cat || 'A'))
+  if (pool.length < 3) pool = WORDS.value.filter(w => w.word !== it.word)
   options.value = shuffle(shuffle(pool).slice(0, 3).map(w => w.word).concat([it.word]))
 }
+watch([view, qi], () => {
+  if (view.value === 'choice' && !answered.value && options.value.length < 2) buildOptions(qItem.value)
+})
 async function answerChoice(w) {
   if (answered.value) return
   const it = qItem.value
@@ -128,6 +133,7 @@ function retryWrong() {
   queue.value = shuffle(wrong.value.map(w => WORDS.value.find(x => x.word === w.word) || w))
   qi.value = 0; results.value = []; wrong.value = []; answered.value = false; picked.value = ''; okFlag.value = false; t0.value = Date.now()
   view.value = 'choice'
+  buildOptions(queue.value[0])
 }
 
 const lettersCards = computed(() => letters.value.map(c => {
@@ -321,6 +327,16 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
           </div>
         </div>
       </div>
+      <div class="gname" style="margin:18px 4px 8px">每组成语数</div>
+      <div class="groups">
+        <div class="gitem" v-for="n in [5, 10, 15, 20]" :key="n" @click="SET.chunk = n; saveSet()">
+          <div class="gmain">
+            <div class="gname">{{ n }} 个<span class="done" v-if="Number(SET.chunk) === n">当前</span></div>
+            <div class="gmeta">每组 {{ n }} 个成语</div>
+          </div>
+        </div>
+      </div>
+      <div class="gmeta" style="text-align:center;margin-top:18px">构建版本 v3 · Vue</div>
     </div>
   </template>
 
